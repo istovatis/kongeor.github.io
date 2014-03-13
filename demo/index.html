@@ -1,0 +1,361 @@
+---
+layout: presentation
+title: Java 8 Lambdas and Streams
+---
+<div id="impress">
+  <!-- slide-1 -->
+  <div id="welcome" class="step slide" data-x="0" data-y="0">
+    <q>Java 8 Lambdas and Streams</q>
+    <p>Kostas Georgiadis (@kongeor)</p>
+    <p>kongeor@gmail.com</p>
+  </div> 
+
+  <div id="outline" class="step slide" data-x="1000" data-y="0">
+    <p class="title">Outline</p>
+    <p>1. A little of <strong>Java</strong> history. <strong>JVM</strong> and alternative languages</p>
+    <p>2. Worming up ... annoying examples</p>
+    <p>3. <strong>@FunctionalInterface</strong></p>
+    <p>4. Java <strong>Lambdas</strong></p>
+    <p>5. Method References</p>
+    <p>6. Annoying examples pt2</p>
+    <p>7. Stream API</p>
+    <p>8. Sample Project</p>
+  </div> 
+
+  <div id="java-jvm" class="step slide" data-x="2000" data-y="0">
+    <p class="title">Java & JVM</p>
+    <p>The evolution of java</p>
+    <p>Java appeared in 1995</p>
+    <p>Generics where added in 2004 (J2SE 5.0)<p>
+    <p>Alternative JVM languages. Clojure, Groovy, Scala, JRuby, Jyphon, Rhino ...</p>
+  </div> 
+
+  <div id="yet-another" class="step slide" data-x="3000" data-y="0">
+    <q>Yet another java major release?</q>
+  </div>
+
+  <div id="annoying-pt1" class="step slide" data-x="4000" data-y="0">
+    <q>Annoying Examples pt1</q>
+    <p>Note: no actual worms were harmed</p>
+    <p>Q: Why worms and why these examples?</p>
+  </div>
+
+  <div id="worm-class" class="step slide" data-x="5000" data-y="0">
+    <p class="title">The Worm class</p>
+    {% highlight java %}
+    public class Worm implements Creature {
+
+        private static final int INITIAL_LIFE = 100;
+
+        public enum Team {
+            RED, BLUE, GREEN
+        }
+
+        private final String name;
+        private final Team team;
+        private int life;
+
+        public Worm(String name, Team team) {
+            this.name = name;
+            this.team = team;
+            life = INITIAL_LIFE;
+        }
+    ...
+    {% endhighlight %}
+  </div> 
+
+  <div id="wormmanager-class" class="step slide" data-x="6000" data-y="0">
+    <p class="title">The WormsManager class</p>
+    {% highlight java %}
+    public class WormsManager {
+
+        private List<Worm> worms;
+
+        public WormsManager() {
+            worms = new ArrayList<>();
+        }
+
+        public List<Worm> getWorms() {
+            return worms;
+        }
+
+        public void register(Worm worm) {
+            worms.add(worm);
+        }
+    ...
+    {% endhighlight %}
+  </div> 
+
+  <div id="sortbyname-comparator" class="step slide" data-x="7000" data-y="0">
+    <p class="title">Sort By Name</p>
+    {% highlight java %}
+    public void sortByName() {
+
+        Comparator<Worm> namesComparator = new Comparator<Worm>() {
+            @Override
+            public int compare(Worm w1, Worm o2) {
+                return w1.getName().compareTo(o2.getName());
+            }
+        };
+
+        Collections.sort(worms, namesComparator);
+    }
+    {% endhighlight %}
+  </div> 
+
+  <div id="sortbynameandlife-comparator" class="step slide" data-x="8000" data-y="0">
+    <p class="title">Sort By Name and Life</p>
+    {% highlight java %}
+    public void sortByNameAndLife() {
+
+        Comparator<Worm> comparator = new Comparator<Worm>() {
+            @Override
+            public int compare(Worm w1, Worm w2) {
+                int res = w1.getName().compareTo(w2.getName());
+                return res != 0 ? res : w2.getLife() - w1.getLife();
+            }
+        };
+
+        Collections.sort(worms, comparator);
+    }
+    {% endhighlight %}
+  </div> 
+
+  <div id="gettotallifeforteam" class="step slide" data-x="9000" data-y="0">
+    <p class="title">Get the total life for a specific team</p>
+    {% highlight java %}
+    public int getTotalLifeFor(Team team) {
+
+        int life = 0;
+
+        for (Worm worm : getWorms()) {
+            if (worm.getTeam().equals(team)) {
+                life += worm.getLife();
+            }
+        }
+
+        return life;
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="getfirstdeadworm" class="step slide" data-x="10000" data-y="0">
+    <p class="title">Get the first dead worm</p>
+    {% highlight java %}
+    public Worm getFirstDeadWorm() {
+
+        Worm dead = null;
+
+        for (Worm worm : getWorms()) {
+            if (!worm.isAlive()) {
+                dead = worm;
+                break;
+            }
+        }
+
+        return dead;
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="getmostlively" class="step slide" data-x="11000" data-y="0">
+    <p class="title">Get the worm with the most life</p>
+    {% highlight java %}
+    public Worm getMostLivelyWorm() {
+
+        Worm lively = getWorms().get(0);
+
+        for (Worm worm : getWorms()) {
+            if (worm.getLife() > lively.getLife()) {
+                lively = worm;
+            }
+        }
+
+        return lively;
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="theproblem" class="step slide" data-x="12000" data-y="0">
+    <q>Did you spot the problem?</q>
+  </div>
+
+  <div id="funint" class="step slide" data-x="13000" data-y="0">
+    <q>Functional Interfaces</q>
+    <p>The @FunctionalInterface annotation</p>
+    <p>Markers for SAM (single abstract method)</p>
+    <p>Default and static methods</p>
+    <p>Multiple inheritance?</p>
+  </div> 
+
+  <div id="comparator8" class="step slide" data-x="14000" data-y="0">
+    {% highlight java %}
+    @FunctionalInterface
+    public interface Comparator<T> {
+        int compare(T o1, T o2);
+        ...
+        default Comparator<T> reversed() {
+            return Collections.reverseOrder(this);
+        }
+        ...
+        public static <T extends Comparable<? super T>> 
+                Comparator<T> reverseOrder() {
+            return Collections.reverseOrder();
+        }
+        ...
+    }
+    {% endhighlight %}
+  </div> 
+
+  <div id="mixin-example" class="step slide" data-x="15000" data-y="0">
+    {% highlight java %}
+    interface Foo {
+        default void baz() {
+            System.out.println("Foo::baz");
+        }
+    }
+
+    interface Bar {
+        default void baz() {
+            System.out.println("Bar::baz");
+        }
+    }
+
+    class Qux implements Foo, Bar {
+        @Override
+        public void baz() {
+            System.out.println("Qux::baz");
+        }
+    }
+
+    public class MultipleInheritance {
+        public static void main(String[] args) {
+            new Qux().baz();
+        }
+    }
+    {% endhighlight %}
+  </div> 
+
+  <div id="lambda-scott" class="step slide" data-x="16000" data-y="0">
+    <p><strong>Wallace Wells:</strong> If you want something bad, you have to fight for it. Step up your game, Scott. Break out the L-word.</q>
+    <p><strong>Scott Pilgrim:</strong> Liquor?</p>
+    <p><strong>Wallace Wells:</strong> The other L-word.</p>
+    <p><strong>Scott Pilgrim:</strong> Love?</p>
+    <p><strong>Wallace Wells:</strong> It's 'lambdas', Scott.</p>
+    <a class="reference" href="http://www.rottentomatoes.com/m/scott_pilgrims_vs_the_world/quotes/">( Scott Pilgrim vs. the World Quotes )</a>
+  </div>
+
+  <div id="lambdas" class="step slide" data-x="0" data-y="1500">
+    <q>Lambdas</q>
+    <p>In computer programming, an anonymous function (also function constant, function literal, or lambda function) is a function defined, and possibly called, without being bound to an identifier. Anonymous functions are convenient to pass as an argument to a higher-order function and are ubiquitous in languages with first-class functions such as Haskell.</p>
+    <a class="reference" href="http://en.wikipedia.org/wiki/Anonymous_function">( Wikipedia )</a>
+  </div>
+
+  <div id="more-annoying-examples" class="step slide" data-x="1000" data-y="1500">
+    <q>What about for some more annoying examples?</q>
+  </div>
+
+  <div id="worm-predicate" class="step slide" data-x="2000" data-y="1500">
+    {% highlight java %}
+    @FunctionalInterface
+    public interface WormPredicate {
+
+        boolean test(Worm worm);
+    }
+    {% endhighlight %}
+  </div>
+
+
+  <div id="worm-filter-predicate" class="step slide" data-x="3000" data-y="1500">
+    {% highlight java %}
+    public List<Worm> filter(WormPredicate predicate) {
+        List<Worm> filtered = new ArrayList<>();
+        for (Worm worm : getWorms()) {
+            if (predicate.test(worm)) {
+                filtered.add(worm);
+            }
+        }
+        return filtered;
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="worm-filter-predicate-sample" class="step slide" data-x="4000" data-y="1500">
+    {% highlight java %}
+    public List<Worm> getRedTeamDyingWorms() {
+        return filter(new WormPredicate() {
+
+            @Override
+            public boolean test(Worm worm) {
+                return worm.getLife() <= 10 &&
+                       worm.getTeam().equals(Team.RED);
+            }
+        });
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="do-not-reinvent-the-wheel" class="step slide" data-x="5000" data-y="1500">
+    <q>Do not reinvent the wheel</q>
+  </div>
+
+
+  <div id="process-example" class="step slide" data-x="6000" data-y="1500">
+    {% highlight java %}
+    import java.util.function.Consumer;
+    import java.util.function.Predicate;
+
+    public void process(Predicate<Worm> predicate, Consumer<Worm> consumer) {
+        for (Worm worm: getWorms()) {
+            if (predicate.test(worm)) {
+                consumer.accept(worm);
+            }
+        }
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="process-example-use" class="step slide" data-x="7000" data-y="1500">
+    {% highlight java %}
+    WormsManager manager = WormsManager.createRandom(10);
+    manager.process(new Predicate<Worm>() {
+        
+        @Override
+        public boolean test(Worm worm) {
+            return worm.isAlive();
+        }
+    }, new Consumer<Worm>() {
+        
+        @Override
+        public void accept(Worm worm) {
+            System.out.print(worm);
+        }
+    });
+    {% endhighlight %}
+  </div>
+
+  <div id="arrow" class="step slide" data-x="8000" data-y="1500">
+    <center><q>&rarr;</q></center>
+  </div>
+
+  <div id="lambda-basic-syntax" class="step slide" data-x="9000" data-y="1500">
+    {% highlight java %}
+    manager.process((Worm w) -> { return w.isAlive(); },
+                    (Worm w) -> { System.out.print(w); });
+    {% endhighlight %}
+  </div>
+
+  <div id="arrow-2" class="step slide" data-x="10000" data-y="1500">
+    <center><q>&rarr;</q></center>
+  </div>
+
+  <div id="lambda-type-inference" class="step slide" data-x="11000" data-y="1500">
+    {% highlight java %}
+    manager.process(w -> w.isAlive(),
+                    w -> System.out.print(w));
+    {% endhighlight %}
+  </div>
+  <div id="overview" class="step" data-x="8000" data-y="1500" data-scale="15">
+  </div>
+</div>
+
