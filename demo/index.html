@@ -4,10 +4,15 @@ title: Java 8 Lambdas and Streams
 ---
 <div id="impress">
   <!-- slide-1 -->
-  <div id="welcome" class="step slide" data-x="0" data-y="0">
+  <div id="welcome" class="step slide" data-x="-1000" data-y="0">
     <q>Java 8 Lambdas and Streams</q>
     <p>Kostas Georgiadis (@kongeor)</p>
     <p>kongeor@gmail.com</p>
+    <a>http://kongeor.github.io/presentations/lambdas</a>
+  </div> 
+
+  <div id="cliché" class="step slide" data-x="0" data-y="0">
+    <center><q><i>Cliché</i></q></center>
   </div> 
 
   <div id="outline" class="step slide" data-x="1000" data-y="0">
@@ -16,15 +21,13 @@ title: Java 8 Lambdas and Streams
     <p>2. Worming up ... annoying examples</p>
     <p>3. <strong>@FunctionalInterface</strong></p>
     <p>4. Java <strong>Lambdas</strong></p>
-    <p>5. Method References</p>
-    <p>6. Annoying examples pt2</p>
-    <p>7. Stream API</p>
-    <p>8. Sample Project</p>
+    <p>5. Annoying examples pt.2</p>
+    <p>6. <strong>Stream</strong> API</p>
   </div> 
 
   <div id="java-jvm" class="step slide" data-x="2000" data-y="0">
     <p class="title">Java & JVM</p>
-    <p>The evolution of java</p>
+    <p>The evolution of Java</p>
     <p>Java appeared in 1995</p>
     <p>Generics where added in 2004 (J2SE 5.0)<p>
     <p>Alternative JVM languages. Clojure, Groovy, Scala, JRuby, Jyphon, Rhino ...</p>
@@ -41,10 +44,8 @@ title: Java 8 Lambdas and Streams
   </div>
 
   <div id="worm-class" class="step slide" data-x="5000" data-y="0">
-    <p class="title">The Worm class</p>
     {% highlight java %}
     public class Worm implements Creature {
-
         private static final int INITIAL_LIFE = 100;
 
         public enum Team {
@@ -65,7 +66,6 @@ title: Java 8 Lambdas and Streams
   </div> 
 
   <div id="wormmanager-class" class="step slide" data-x="6000" data-y="0">
-    <p class="title">The WormsManager class</p>
     {% highlight java %}
     public class WormsManager {
 
@@ -87,7 +87,7 @@ title: Java 8 Lambdas and Streams
   </div> 
 
   <div id="sortbyname-comparator" class="step slide" data-x="7000" data-y="0">
-    <p class="title">Sort By Name</p>
+    <div class="space100"></div>
     {% highlight java %}
     public void sortByName() {
 
@@ -104,7 +104,7 @@ title: Java 8 Lambdas and Streams
   </div> 
 
   <div id="sortbynameandlife-comparator" class="step slide" data-x="8000" data-y="0">
-    <p class="title">Sort By Name and Life</p>
+    <div class="space100"></div>
     {% highlight java %}
     public void sortByNameAndLife() {
 
@@ -122,7 +122,7 @@ title: Java 8 Lambdas and Streams
   </div> 
 
   <div id="gettotallifeforteam" class="step slide" data-x="9000" data-y="0">
-    <p class="title">Get the total life for a specific team</p>
+    <div class="space100"></div>
     {% highlight java %}
     public int getTotalLifeFor(Team team) {
 
@@ -140,7 +140,7 @@ title: Java 8 Lambdas and Streams
   </div>
 
   <div id="getfirstdeadworm" class="step slide" data-x="10000" data-y="0">
-    <p class="title">Get the first dead worm</p>
+    <div class="space100"></div>
     {% highlight java %}
     public Worm getFirstDeadWorm() {
 
@@ -159,7 +159,7 @@ title: Java 8 Lambdas and Streams
   </div>
 
   <div id="getmostlively" class="step slide" data-x="11000" data-y="0">
-    <p class="title">Get the worm with the most life</p>
+    <div class="space100"></div>
     {% highlight java %}
     public Worm getMostLivelyWorm() {
 
@@ -182,9 +182,9 @@ title: Java 8 Lambdas and Streams
 
   <div id="funint" class="step slide" data-x="13000" data-y="0">
     <q>Functional Interfaces</q>
-    <p>The @FunctionalInterface annotation</p>
+    <p>The <span class="code">@FunctionalInterface</span> annotation</p>
     <p>Markers for SAM (single abstract method)</p>
-    <p>Default and static methods</p>
+    <p><strong>Default</strong> and <strong>static</strong> methods</p>
     <p>Multiple inheritance?</p>
   </div> 
 
@@ -227,12 +227,6 @@ title: Java 8 Lambdas and Streams
             System.out.println("Qux::baz");
         }
     }
-
-    public class MultipleInheritance {
-        public static void main(String[] args) {
-            new Qux().baz();
-        }
-    }
     {% endhighlight %}
   </div> 
 
@@ -242,7 +236,7 @@ title: Java 8 Lambdas and Streams
     <p><strong>Wallace Wells:</strong> The other L-word.</p>
     <p><strong>Scott Pilgrim:</strong> Love?</p>
     <p><strong>Wallace Wells:</strong> It's 'lambdas', Scott.</p>
-    <a class="reference" href="http://www.rottentomatoes.com/m/scott_pilgrims_vs_the_world/quotes/">( Scott Pilgrim vs. the World Quotes )</a>
+    <p>(For the real quote <span class="abitup">&rarr;</span> <a class="reference" href="http://www.rottentomatoes.com/m/scott_pilgrims_vs_the_world/quotes/"> Scott Pilgrim vs. the World Quotes</a>)</p>
   </div>
 
   <div id="lambdas" class="step slide" data-x="0" data-y="1500">
@@ -252,21 +246,17 @@ title: Java 8 Lambdas and Streams
   </div>
 
   <div id="more-annoying-examples" class="step slide" data-x="1000" data-y="1500">
-    <q>What about for some more annoying examples?</q>
+    <q>More annoying examples please ...</q>
   </div>
 
   <div id="worm-predicate" class="step slide" data-x="2000" data-y="1500">
     {% highlight java %}
     @FunctionalInterface
     public interface WormPredicate {
-
         boolean test(Worm worm);
     }
     {% endhighlight %}
-  </div>
-
-
-  <div id="worm-filter-predicate" class="step slide" data-x="3000" data-y="1500">
+    <hr />
     {% highlight java %}
     public List<Worm> filter(WormPredicate predicate) {
         List<Worm> filtered = new ArrayList<>();
@@ -280,7 +270,8 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="worm-filter-predicate-sample" class="step slide" data-x="4000" data-y="1500">
+  <div id="worm-filter-predicate-sample" class="step slide" data-x="3000" data-y="1500">
+    <div class="space100"></div>
     {% highlight java %}
     public List<Worm> getRedTeamDyingWorms() {
         return filter(new WormPredicate() {
@@ -295,17 +286,18 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="do-not-reinvent-the-wheel" class="step slide" data-x="5000" data-y="1500">
+  <div id="do-not-reinvent-the-wheel" class="step slide" data-x="4000" data-y="1500">
     <q>Do not reinvent the wheel</q>
   </div>
 
 
-  <div id="process-example" class="step slide" data-x="6000" data-y="1500">
+  <div id="process-example" class="step slide" data-x="5000" data-y="1500">
     {% highlight java %}
     import java.util.function.Consumer;
     import java.util.function.Predicate;
 
-    public void process(Predicate<Worm> predicate, Consumer<Worm> consumer) {
+    public void process(Predicate<Worm> predicate,
+                        Consumer<Worm> consumer) {
         for (Worm worm: getWorms()) {
             if (predicate.test(worm)) {
                 consumer.accept(worm);
@@ -315,9 +307,9 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="process-example-use" class="step slide" data-x="7000" data-y="1500">
+  <div id="process-example-use" class="step slide" data-x="6000" data-y="1500">
     {% highlight java %}
-    WormsManager manager = WormsManager.createRandom(10);
+    // WormsManager manager = WormsManager.createRandom(10);
     manager.process(new Predicate<Worm>() {
         
         @Override
@@ -334,27 +326,144 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="arrow" class="step slide" data-x="8000" data-y="1500">
+  <div id="arrow" class="step slide" data-x="7000" data-y="1500">
+    <div class="space100"></div>
+    <div class="space50"></div>
     <center><q>&rarr;</q></center>
   </div>
 
-  <div id="lambda-basic-syntax" class="step slide" data-x="9000" data-y="1500">
+  <div id="lambda-basic-syntax" class="step slide" data-x="8000" data-y="1500">
     {% highlight java %}
     manager.process((Worm w) -> { return w.isAlive(); },
                     (Worm w) -> { System.out.print(w); });
     {% endhighlight %}
-  </div>
-
-  <div id="arrow-2" class="step slide" data-x="10000" data-y="1500">
-    <center><q>&rarr;</q></center>
-  </div>
-
-  <div id="lambda-type-inference" class="step slide" data-x="11000" data-y="1500">
+    <center><q>&darr;</q></center>
     {% highlight java %}
     manager.process(w -> w.isAlive(),
                     w -> System.out.print(w));
     {% endhighlight %}
   </div>
+
+  <div id="method-references" class="step slide" data-x="9000" data-y="1500">
+    <q>Method::References</q>
+    <p>Convenient, easy-to-read lambda expressions</p>
+  </div>
+
+  <div id="process-function" class="step slide" data-x="10000" data-y="1500">
+    {% highlight java %}
+    public <T> void process(Function<Worm, T> function, 
+                            Predicate<T> predicate,
+                            Consumer<T> consumer) {
+        for (Worm worm: getWorms()) {
+            T result = function.apply(worm);
+            if (predicate.test(result)) {
+                consumer.accept(result);
+            }
+        }
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    manager.process(Worm::getName, n -> n.equals("Chuck"),
+                                     System.out::println);
+    manager.process(Function.identity(), Worm::isAlive,
+                                     System.out::print);
+    {% endhighlight %}
+  </div>
+
+  <div id="util-function" class="step slide" data-x="11000" data-y="1500">
+    <q>Functional Interfaces of the java.util.function package</q>
+    <p>Predicate</p>
+    <p>Consumer</p>
+    <p>Function</p>
+    <p>Supplier</p>
+    <p>UnaryOperator</p>
+    <p>BinaryOperator</p>
+  </div>
+
+  <div id="lexical-scoping" class="step slide" data-x="12000" data-y="1500">
+    <q>Lexical Scoping</q>
+    <p>Unlike local and anonymous classes, lambdas do not introduce a new level of scoping</p>
+  </div>
+
+  <div id="scoping-example" class="step slide" data-x="13000" data-y="1500">
+    {% highlight java %}
+    public List<Worm> filterByName(String name) {
+        return manager.filter(new WormPredicate() {
+            @Override
+            public boolean test(Worm worm) {
+                // io.github.kongeor.demo.lambda.example.Scoping$1@7852e922
+                System.out.println(this);
+                return worm.getName().equals(name);
+            }
+        });
+    }
+    
+    public List<Worm> filterByNameLambda(String name) {
+        return manager.filter(w -> {
+            // io.github.kongeor.demo.lambda.example.Scoping@36baf30c
+            System.out.println(this);  
+            return w.getName().equals(name);
+        });
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="scoping-example-cont" class="step slide" data-x="14000" data-y="1500">
+    {% highlight java %}
+    public List<Worm> filterByName(String name) {
+        return manager.filter(new WormPredicate() {
+            @Override
+            public boolean test(Worm worm) {
+                String name = "Jean-Claude";
+                return worm.getName().equals(name);
+            }
+        });
+    }
+    
+    public List<Worm> filterByNameLambda(String name) {
+        return manager.filter(w -> {
+            // String name = "Steven"; // Cannot redeclare
+            System.out.println(this);  
+            return w.getName().equals(name);
+        });
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="effectively-final" class="step slide" data-x="15000" data-y="1500">
+    {% highlight java %}
+    public List<Worm> filterByName(String name) {
+        return manager.filter(new WormPredicate() {
+            @Override
+            public boolean test(Worm worm) {
+                // name = "Jean-Claude"; // effectively final
+                return worm.getName().equals(name);
+            }
+        });
+    }
+    
+    public List<Worm> filterByNameLambda(String name) {
+        // name = "Steven"; // effectively final
+        return manager.filter(w -> {
+            System.out.println(this);  
+            return w.getName().equals(name);
+        });
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="effectively-final" class="step slide" data-x="16000" data-y="1500">
+    <center>
+      <q>It's time for ... for loop hunting!</q>
+    <center>
+  </div>
+  
+
+  <div id="streams-intro" class="step slide" data-x="0" data-y="3000">
+    <q>Streams</q>
+  </div>
+
   <div id="overview" class="step" data-x="8000" data-y="1500" data-scale="15">
   </div>
 </div>
