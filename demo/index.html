@@ -8,7 +8,7 @@ title: Java 8 Lambdas and Streams
     <q>Java 8 Lambdas and Streams</q>
     <p>Kostas Georgiadis (@kongeor)</p>
     <p>kongeor@gmail.com</p>
-    <a>http://kongeor.github.io/presentations/lambdas</a>
+    <a href="http://kongeor.github.io/presentations/lambdas">http://kongeor.github.io/presentations/lambdas</a>
   </div> 
 
   <div id="cliché" class="step slide" data-x="0" data-y="0">
@@ -453,7 +453,7 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="effectively-final" class="step slide" data-x="16000" data-y="1500">
+  <div id="loop-hunting" class="step slide" data-x="16000" data-y="1500">
     <center>
       <q>It's time for ... for loop hunting!</q>
     <center>
@@ -462,6 +462,82 @@ title: Java 8 Lambdas and Streams
 
   <div id="streams-intro" class="step slide" data-x="0" data-y="3000">
     <q>Streams</q>
+    <p>Streams are wrappers around collections that provide aggregate operations 
+    (filter, map, forEach, reduce, etc ...) that are lazily evaluated and can
+    provide parallel execution for free.</p>
+  </div>
+
+  <div id="stream-foreach" class="step slide" data-x="1000" data-y="3000">
+    {% highlight java %}
+    public void boost(int amount) {
+        for (Worm worm: getWorms()) {
+            worm.setLife(worm.getLife() + amount);
+        }
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    public void boost(int amount) {
+        // Iterable
+        getWorms().forEach(w -> w.setLife(w.getLife() + amount));
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    public void boost(int amount) {
+        // Stream
+        getWorms().stream().forEach(w -> w.setLife(w.getLife() + amount));
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="stream-filter-reduce" class="step slide" data-x="2000" data-y="3000">
+    {% highlight java %}
+    public int getTotalLifeFor(Team team) {
+        int life = 0;
+        for (Worm worm : getWorms()) {
+            if (worm.getTeam().equals(team)) {
+                life += worm.getLife();
+            }
+        }
+        return life;
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    return getWorms().stream()
+                     .filter(w -> w.getTeam().equals(team))
+                     .map(Worm::getLife)
+                     .reduce(0, (x, y) -> x + y).intValue();
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    return getWorms().stream().filter(...).mapToInt(Worm::getLife).sum();
+    {% endhighlight %}
+  </div>
+
+  <div id="stream-find-optional" class="step slide" data-x="3000" data-y="3000">
+    {% highlight java %}
+    public Worm getFirstDeadWorm() {
+        Worm dead = null;
+        for (Worm worm : getWorms()) {
+            if (!worm.isAlive()) {
+                dead = worm;
+                break;
+            }
+        }
+        return dead;
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    public Worm getFirstDeadWorm() {
+        return getWorms().stream()
+                         .filter(w -> !w.isAlive())
+                         .findFirst()
+                         .orElse(null);
+    }
+    {% endhighlight %}
   </div>
 
   <div id="overview" class="step" data-x="8000" data-y="1500" data-scale="15">
