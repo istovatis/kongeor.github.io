@@ -731,5 +731,14 @@ p.title {
 }
 
 hr {
-  margin-bottom: 30px;
+  margin: 0 0 20px;
+}
+
+table.benchmark td {
+  padding: 5px 20px;
+}
+
+.block {
+  display: block;
+  margin: 15px 0;
 }

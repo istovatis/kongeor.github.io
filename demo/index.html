@@ -8,7 +8,8 @@ title: Java 8 Lambdas and Streams
     <q>Java 8 Lambdas and Streams</q>
     <p>Kostas Georgiadis (@kongeor)</p>
     <p>kongeor@gmail.com</p>
-    <a href="http://kongeor.github.io/presentations/lambdas">http://kongeor.github.io/presentations/lambdas</a>
+    <a class="block" href="https://kongeor.github.io/presentations/lambdas">https://kongeor.github.io/presentations/lambdas</a>
+    <a class="block" href="https://github.com/kongeor/LambdasDemo">https://github.com/kongeor/LambdasDemo</a>
   </div> 
 
   <div id="cliché" class="step slide" data-x="0" data-y="0">
@@ -230,7 +231,26 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div> 
 
-  <div id="lambda-scott" class="step slide" data-x="16000" data-y="0">
+  <div id="api-flex" class="step slide" data-x="16000" data-y="0">
+    <p class="title">API flexibility</p>
+    {% highlight java %}
+    public class Giant implements Creature {
+        @Override
+        public void move(WorldMap map, Point... points) {
+            // move around
+        }
+    }
+
+    public interface Creature {
+        public void move(WorldMap map, Point... points);
+        default void move(WorldMap map, List<Point> points) {
+            move(map, points.toArray(new Point[points.size()]));
+        }
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="lambda-scott" class="step slide" data-x="16000" data-y="-1000">
     <p><strong>Wallace Wells:</strong> If you want something bad, you have to fight for it. Step up your game, Scott. Break out the L-word.</q>
     <p><strong>Scott Pilgrim:</strong> Liquor?</p>
     <p><strong>Wallace Wells:</strong> The other L-word.</p>
@@ -337,10 +357,14 @@ title: Java 8 Lambdas and Streams
     manager.process((Worm w) -> { return w.isAlive(); },
                     (Worm w) -> { System.out.print(w); });
     {% endhighlight %}
-    <center><q>&darr;</q></center>
+    <center><p class="title">&darr;</p></center>
     {% highlight java %}
     manager.process(w -> w.isAlive(),
                     w -> System.out.print(w));
+    {% endhighlight %}
+    <center><p class="title">&darr;</p></center>
+    {% highlight java %}
+    manager.process(Worm::isAlive, System.out::print);
     {% endhighlight %}
   </div>
 
@@ -372,13 +396,13 @@ title: Java 8 Lambdas and Streams
   </div>
 
   <div id="util-function" class="step slide" data-x="11000" data-y="1500">
-    <q>Functional Interfaces of the java.util.function package</q>
-    <p>Predicate</p>
-    <p>Consumer</p>
-    <p>Function</p>
-    <p>Supplier</p>
-    <p>UnaryOperator</p>
-    <p>BinaryOperator</p>
+    <p class="title">Functional Interfaces of the <span class="code">java.util.function</span> package</p>
+    <p><span class="code">Predicate</span> (boolean-valued function)</p>
+    <p><span class="code">Consumer</span> (accepts a T and produces no result)</p>
+    <p><span class="code">Function </span> (accepts a type T and produces a result R)</p>
+    <p><span class="code">Supplier</span> (accepts no arguments and produces a result T)</p>
+    <p><span class="code">UnaryOperator </span>(specialized function that produces a result of the same type)</p>
+    <p>...</p>
   </div>
 
   <div id="lexical-scoping" class="step slide" data-x="12000" data-y="1500">
@@ -458,7 +482,6 @@ title: Java 8 Lambdas and Streams
       <q>It's time for ... for loop hunting!</q>
     <center>
   </div>
-  
 
   <div id="streams-intro" class="step slide" data-x="0" data-y="3000">
     <q>Streams</q>
@@ -467,7 +490,15 @@ title: Java 8 Lambdas and Streams
     provide parallel execution for free.</p>
   </div>
 
-  <div id="stream-foreach" class="step slide" data-x="1000" data-y="3000">
+  <div id="streams-outline" class="step slide" data-x="1000" data-y="3000">
+    <q>Streams characteristics</q>
+    <p>Internal (and not External) iteration</p>
+    <p>What ... not How</p>
+    <p>Flexibility</p>
+    <p>Lazy evaluation</p>
+  </div>
+  
+  <div id="stream-foreach" class="step slide" data-x="2000" data-y="3000">
     {% highlight java %}
     public void boost(int amount) {
         for (Worm worm: getWorms()) {
@@ -491,7 +522,7 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="stream-filter-reduce" class="step slide" data-x="2000" data-y="3000">
+  <div id="stream-filter-reduce" class="step slide" data-x="3000" data-y="3000">
     {% highlight java %}
     public int getTotalLifeFor(Team team) {
         int life = 0;
@@ -516,7 +547,7 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="stream-find-optional" class="step slide" data-x="3000" data-y="3000">
+  <div id="stream-find-optional" class="step slide" data-x="4000" data-y="3000">
     {% highlight java %}
     public Worm getFirstDeadWorm() {
         Worm dead = null;
@@ -540,7 +571,224 @@ title: Java 8 Lambdas and Streams
     {% endhighlight %}
   </div>
 
-  <div id="overview" class="step" data-x="8000" data-y="1500" data-scale="15">
+  <div id="string-joiner" class="step slide" data-x="5000" data-y="3000">
+    {% highlight java %}
+    public String getCommaSeparatedNames() {
+        String names = "";
+        int size = getWorms().size();
+        for (Worm worm : getWorms()) {
+            names += worm.getName();
+            if (!getWorms().get(size - 1).equals(worm)) {
+                names += ", ";
+            }
+        }
+        return names;
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    public String getCommaSeparatedNames() {
+        return getWorms().stream().map(Worm::getName)
+                .collect(Collectors.joining(", ")).toString();
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="string-joiner-unique" class="step slide" data-x="6000" data-y="3000">
+    {% highlight java %}
+    public String getUniqueCommaSeparatedNames() {
+        Set<String> names = new HashSet<>();
+        for (Worm worm : getWorms()) {
+            names.add(worm.getName());
+        }
+        String result = ""; Iterator<String> it = names.iterator();
+        while (it.hasNext()) {
+            result += it.next(); if(it.hasNext()) result += ", ";
+            }
+        }
+        return result;
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    public String getUniqueCommaSeparatedNames() {
+        return getWorms().stream().map(Worm::getName).distinct()
+                .collect(Collectors.joining(", ")).toString();
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="partition-by" class="step slide" data-x="7000" data-y="3000">
+    {% highlight java %}
+    public Map<Team, List<Worm>> getByTeams() {
+        Map<Team, List<Worm>> teams = new HashMap<>();
+        for (Worm worm : getWorms()) {
+            List<Worm> team = teams.get(worm.getTeam());
+            if (team == null) {
+                team = new ArrayList<>();
+                teams.put(worm.getTeam(), team);
+            }
+            team.add(worm);
+        }
+        return teams;
+    }
+    {% endhighlight %}
+    <hr />
+    {% highlight java %}
+    public Map<Team, List<Worm>> getByTeams() {
+        return getWorms().stream()
+             .collect(Collectors.groupingBy(Worm::getTeam));
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="parallel-stream" class="step slide" data-x="8000" data-y="3000">
+    <q>Parallel Streams</q>
+  </div>
+
+  <div id="parallel-stream-example" class="step slide" data-x="9000" data-y="3000">
+    {% highlight java %}
+    public class Parallel {
+
+        public static void main(String[] args) {
+            // 0 1 2 3 4 5 6 7 8 9
+            IntStream.range(0, 10)
+                     .forEach(i -> System.out.print(i + " "));
+            System.out.println();
+            // 6 8 5 9 7 2 1 4 3 0
+            IntStream.range(0, 10)
+                     .parallel()
+                     .forEach(i -> System.out.print(i + " "));
+        }
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="bonus-material" class="step slide" data-x="0" data-y="4000">
+    <q>Bonus material</q>
+    <p>Comparator Quiz</p>
+    <p>Infinite Streams</p>
+    <p>Naive benchmark</p>
+  </div>
+
+  <div id="comparator-quiz" class="step slide" data-x="1000" data-y="4000">
+    <p class="title">Our sorting needs a refinement</p>
+    {% highlight java %}
+    public void sortByNameAndLife() {
+
+        Comparator<Worm> comparator = new Comparator<Worm>() {
+            @Override
+            public int compare(Worm w1, Worm w2) {
+                int res = w1.getName().compareTo(w2.getName());
+                return res != 0 ? res : w2.getLife() - w1.getLife();
+            }
+        };
+        Collections.sort(worms, comparator);    
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="comparator-wrong-answer" class="step slide" data-x="2000" data-y="4000">
+    <p class="title">Is this correct?</p>
+    {% highlight java %}
+    public void sortByNameAndLife() {
+        Collections.sort(worms, Comparator.comparing(Worm::getName)
+                                          .thenComparing(Worm::getLife)
+                                          .reversed());
+    }
+    {% endhighlight %}
+    <div class="space50"></div>
+    <i><p>Hint: No ... why?</p></i>
+  </div>
+
+  <div id="comparator-right-answer" class="step slide" data-x="3000" data-y="4000">
+    <p class="title">Correct answer</p>
+    {% highlight java %}
+    Collections.sort(worms, Comparator.comparing(Worm::getName)
+                .thenComparing(Comparator.comparing(Worm::getLife)
+                .reversed()));
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="wormshock" class="step slide" data-x="4000" data-y="4000">
+    <q>Wormshock Infinite</q>
+    <p>Infinite Streams</p>
+    <div class="space50"></div>
+    <i><p>One more for loop to go!</p></i>
+  </div>
+
+  <div id="worm-create-random" class="step slide" data-x="5000" data-y="4000">
+    <p class="title">The evil mastermind method</p>
+    {% highlight java %}
+    public static WormsManager createRandom(long capacity) {
+
+        WormsManager manager = new WormsManager();
+
+        for (long i = 0; i < capacity; i++) {
+            manager.getWorms().add(Worm.createRandom());
+        }
+
+        return manager;
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="worm-create-infinite" class="step slide" data-x="6000" data-y="4000">
+    <p class="title">Worm generation revisited</p>
+    {% highlight java %}
+    public static WormsManager createRandom(long capacity) {
+
+        WormsManager manager = new WormsManager();
+        
+        manager.getWorms().addAll(
+                   Stream.generate(Worm::createRandom)
+                   .limit(capacity)
+                   .collect(Collectors.toList())
+               );
+
+        return manager;
+    }
+    {% endhighlight %}
+  </div>
+
+  <div id="benchmarking-streams" class="step slide" data-x="7000" data-y="4000">
+    <q>Benchmarking Streams</q>
+    <i><p>In a truly naive way</p></i>
+  </div>
+
+  <div id="benchmarking-problems" class="step slide" data-x="8000" data-y="4000">
+    <p class="title">Out of memory problems</p>
+    <pre>
+10000000 857(0) 1253(0) 376(0) 
+20000000 3109(0) 1067(0) 723(0) 
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space 
+    </pre>
+  </div>
+
+  <div id="benchmarking-results" class="step slide" data-x="9000" data-y="4000">
+    <p class="title">Results</p>
+    <table class="benchmark" border="0">
+      <thead>
+        <tr><th>Worm count</th><th>for</th><th>stream</th><th>parallel</th></th></tr>
+      </thead>
+      <tbody>
+      <tr><td>10000000</td><td>1326</td><td>597</td><td>396</td></tr>
+      <tr><td>20000000</td><td>2678</td><td>1118</td><td>767</td></tr>
+      <tr><td>30000000</td><td>3800</td><td>1900</td><td>1360</td></tr>
+      <tr><td>40000000</td><td>5409</td><td>2418</td><td>1704</td></tr>
+      <tr><td>50000000</td><td>131859</td><td>131186</td><td>130253</td></tr>
+      <tr><td>60000000</td><td>340418</td><td>336180</td><td>319894</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="thank-you" class="step slide" data-x="0" data-y="5000">
+    <q>Thank You</q>
+    <p>Reminder: Torturing <u>virtual</u> worms makes perfect!</p>
+  </div>
+
+  <div id="overview" class="step" data-x="8000" data-y="2000" data-scale="15">
   </div>
 </div>
 
